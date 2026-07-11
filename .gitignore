@@ -1,0 +1,9 @@
+data/*.csv
+data/*.zip
+*.db
+*.sqlite
+*.sqlite3
+*.pyc
+__pycache__/
+.venv/
+.env
