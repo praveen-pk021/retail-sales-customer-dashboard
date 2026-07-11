@@ -8,7 +8,16 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATA_DIR = ROOT / "data"
 DB_PATH = ROOT / "retail_dashboard.db"
+DEPLOYMENT_DB_PATH = ROOT / "app" / "retail_dashboard.db"
 SCHEMA_PATH = ROOT / "sql" / "schema.sql"
+
+DEPLOYMENT_TABLES = {
+    "customers",
+    "orders",
+    "order_items",
+    "products",
+    "reviews",
+}
 
 FILE_MAP = {
     "customers": "olist_customers_dataset.csv",
@@ -54,6 +63,26 @@ def load_csv_to_db(table_name: str, csv_name: str, data_dir: Path, conn: sqlite3
     print(f"Loaded {len(df)} rows into {table_name} from {csv_path}")
 
 
+def create_deployment_database() -> None:
+    """Create the smaller database bundled with the Streamlit application."""
+    if DEPLOYMENT_DB_PATH.exists():
+        DEPLOYMENT_DB_PATH.unlink()
+
+    source = sqlite3.connect(DB_PATH)
+    target = sqlite3.connect(DEPLOYMENT_DB_PATH)
+    try:
+        source.backup(target)
+        for table_name in set(FILE_MAP) - DEPLOYMENT_TABLES:
+            target.execute(f"DROP TABLE {table_name}")
+        target.execute("VACUUM")
+        target.commit()
+    finally:
+        target.close()
+        source.close()
+
+    print(f"Deployment database created at {DEPLOYMENT_DB_PATH}")
+
+
 def main() -> None:
     explicit_path = sys.argv[1] if len(sys.argv) > 1 else None
     data_dir = resolve_data_dir(explicit_path)
@@ -71,6 +100,7 @@ def main() -> None:
     conn.commit()
     conn.close()
     print(f"Database created at {DB_PATH}")
+    create_deployment_database()
 
 
 if __name__ == "__main__":

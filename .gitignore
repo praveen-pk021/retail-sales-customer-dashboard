@@ -1,6 +1,7 @@
 data/*.csv
 data/*.zip
 *.db
+!app/retail_dashboard.db
 *.sqlite
 *.sqlite3
 *.pyc

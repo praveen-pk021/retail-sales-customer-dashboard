@@ -4,8 +4,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-ROOT = Path(__file__).resolve().parents[1]
-DB_PATH = ROOT / "retail_dashboard.db"
+DB_PATH = Path(__file__).resolve().with_name("retail_dashboard.db")
 
 st.set_page_config(page_title="Retail Sales & Customer Insights", layout="wide")
 st.title("Retail Sales & Customer Insights Dashboard")

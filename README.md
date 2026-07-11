@@ -54,6 +54,8 @@ pip install -r requirements.txt
 python notebooks/build_db.py
 ```
 
+This also creates `app/retail_dashboard.db`, a compact database used by the dashboard and included for deployment. The raw CSV files and full local database remain excluded from Git.
+
 4. Run the analysis script:
 
 ```bash
